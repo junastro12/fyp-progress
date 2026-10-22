@@ -26,7 +26,8 @@ button{font:inherit;background:none;border:1px solid var(--ln);color:var(--mut);
 button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 </style></head><body><main>
 <h1>Progress FYP: Faktor EPF Balance di Malaysia</h1>
-<p class="s">Tandakan setiap item bila siap. Kemajuan disegerak antara laptop &amp; telefon guna kod rahsia yang sama. <span id="sy" style="font-size:12.5px"></span> <button id="cb" type="button">Tukar kod</button></p>
+<p class="s">Tandakan setiap item bila siap. Kemajuan disegerak antara laptop &amp; telefon guna kod rahsia yang sama. <span id="sy" style="font-size:12.5px"></span></p>
+<section id="cs"><h2>Kod rahsia <small style="font:12px system-ui;color:var(--mut)">(versi 3)</small></h2><p class="s" id="cm" style="margin-bottom:8px"></p><div id="cf" style="display:flex;gap:8px;flex-wrap:wrap"><input id="ci" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Taip kod rahsia (min 16 aksara)" style="flex:1;min-width:200px;font:inherit;padding:8px;background:var(--bg);color:var(--ink);border:1px solid var(--ln);border-radius:6px"><button id="cb" type="button">Simpan kod</button></div><button id="cx" type="button" style="display:none">Tukar kod</button></section>
 
 <section><div class="kp">
 <div><b id="k1">0%</b><span>Keseluruhan siap</span></div>
@@ -134,11 +135,18 @@ const d=snap.data(),rt=+d.t||0;
 if(rt>LT){S=JSON.parse(d.s);LT=rt;local();paint();sy("✓ Live")}else if(rt<LT)push();else sy("✓ Live")},
 ()=>{LIVE=null;sy("Live gagal, guna segerak biasa")})
 }catch(e){LIVE=null}}
-function setCode(){const c=prompt("Masukkan kod rahsia (min 16 aksara). Guna kod SAMA di laptop dan phone:",CODE);
-if(c===null)return;if(c.trim().length<16){alert("Kod terlalu pendek. Minimum 16 aksara.");return}
-CODE=c.trim();try{localStorage.setItem("fyp_code",CODE)}catch(e){}pull();startLive()}
+function showCode(){const has=!!CODE;
+document.getElementById("cf").style.display=has?"none":"flex";
+document.getElementById("cx").style.display=has?"inline-block":"none";
+document.getElementById("cm").textContent=has?"Kod disimpan: "+CODE.slice(0,3)+"•••"+CODE.slice(-3)+" ("+CODE.length+" aksara). Guna kod SAMA di semua peranti.":"Masukkan kod yang sama di laptop dan phone. Minimum 16 aksara, tanpa ruang kosong."}
+function setCode(){const c=document.getElementById("ci").value.trim();
+if(c.length<16){sy("Kod terlalu pendek ("+c.length+"). Minimum 16 aksara.");return}
+CODE=c;try{localStorage.setItem("fyp_code",CODE)}catch(e){}
+showCode();sy("Menyambung...");pull();startLive()}
 document.getElementById("cb").onclick=setCode;
-if(!CODE)setTimeout(setCode,300);else{pull();startLive()}
+document.getElementById("ci").addEventListener("keydown",e=>{if(e.key==="Enter")setCode()});
+document.getElementById("cx").onclick=()=>{if(UNSUB){UNSUB();UNSUB=null}LIVE=null;CODE="";try{localStorage.removeItem("fyp_code")}catch(e){}document.getElementById("ci").value="";showCode();sy("")};
+showCode();if(CODE){pull();startLive()}
 setInterval(()=>{if(!LIVE)pull()},20000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)pull()});
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 function row(id,html,k){return `<label class="r ${S[id]?'d':''}"><input type="checkbox" data-id="${id}" ${S[id]?'checked':''}><span class="t">${html}</span></label>`}
