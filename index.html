@@ -107,7 +107,9 @@ const sy=t=>{const e=document.getElementById("sy");if(e)e.textContent=t};
 const URL_=()=>"https://firestore.googleapis.com/v1/projects/"+FB.pid+"/databases/(default)/documents/progress/"+encodeURIComponent(CODE);
 function local(){try{localStorage.setItem("fyp1",JSON.stringify(S));localStorage.setItem("fyp_t",String(LT))}catch(e){}}
 function save(){LT=Date.now();local();clearTimeout(tm);tm=setTimeout(push,500)}
+let LIVE=null,UNSUB=null;
 async function push(){if(!CODE)return;try{
+if(LIVE){await LIVE.set({s:JSON.stringify(S),t:LT});sy("✓ Live");return}
 const r=await fetch(URL_()+"?updateMask.fieldPaths=s&updateMask.fieldPaths=t&key="+FB.key,{method:"PATCH",headers:{"Content-Type":"application/json"},
 body:JSON.stringify({fields:{s:{stringValue:JSON.stringify(S)},t:{integerValue:String(LT)}}})});
 sy(r.ok?"✓ Disegerak":"Gagal segerak ("+r.status+")")}catch(e){sy("Tiada internet, akan cuba lagi")}}
@@ -120,12 +122,24 @@ const d=(await r.json()).fields||{},rt=+(d.t&&d.t.integerValue)||0;
 if(rt>LT){S=JSON.parse(d.s.stringValue);LT=rt;local();paint();sy("✓ Disegerak")}
 else if(rt<LT){await push()}else sy("✓ Disegerak")
 }catch(e){sy("Tiada internet, guna data setempat")}finally{busy=false}}
+async function startLive(){if(!CODE)return;try{
+if(UNSUB){UNSUB();UNSUB=null}LIVE=null;
+const V="10.14.1",B="https://www.gstatic.com/firebasejs/"+V+"/";
+const [A,F]=await Promise.all([import(B+"firebase-app.js"),import(B+"firebase-firestore.js")]);
+const app=A.getApps().length?A.getApp():A.initializeApp({apiKey:FB.key,projectId:FB.pid});
+const ref=F.doc(F.getFirestore(app),"progress",CODE);
+UNSUB=F.onSnapshot(ref,snap=>{LIVE={set:d=>F.setDoc(ref,d,{merge:true})};
+if(!snap.exists()){if(Object.keys(S).length)push();else sy("✓ Live");return}
+const d=snap.data(),rt=+d.t||0;
+if(rt>LT){S=JSON.parse(d.s);LT=rt;local();paint();sy("✓ Live")}else if(rt<LT)push();else sy("✓ Live")},
+()=>{LIVE=null;sy("Live gagal, guna segerak biasa")})
+}catch(e){LIVE=null}}
 function setCode(){const c=prompt("Masukkan kod rahsia (min 16 aksara). Guna kod SAMA di laptop dan phone:",CODE);
 if(c===null)return;if(c.trim().length<16){alert("Kod terlalu pendek. Minimum 16 aksara.");return}
-CODE=c.trim();try{localStorage.setItem("fyp_code",CODE)}catch(e){}pull()}
+CODE=c.trim();try{localStorage.setItem("fyp_code",CODE)}catch(e){}pull();startLive()}
 document.getElementById("cb").onclick=setCode;
-if(!CODE)setTimeout(setCode,300);else pull();
-setInterval(pull,20000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)pull()});
+if(!CODE)setTimeout(setCode,300);else{pull();startLive()}
+setInterval(()=>{if(!LIVE)pull()},20000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)pull()});
 if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 function row(id,html,k){return `<label class="r ${S[id]?'d':''}"><input type="checkbox" data-id="${id}" ${S[id]?'checked':''}><span class="t">${html}</span></label>`}
 document.getElementById("aum").innerHTML=A.map((a,i)=>row("a"+i,`<span class="pg">${a[0]} · ${a[1]}</span>${a[2]}`)).join("");
