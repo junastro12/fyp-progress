@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ms"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-192.png"><meta name="theme-color" content="#0f766e"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="FYP"><title>Dashboard Progress FYP – EPF Balance</title>
+<style>
+:root{--bg:#f2f5f7;--sf:#fff;--ink:#16212b;--mut:#5b6b78;--ln:#d6dee4;--ac:#0f766e;--wn:#b45309;--ok:#15803d;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a21;--sf:#1b252e;--ink:#e6edf2;--mut:#98a8b5;--ln:#2c3a45;--ac:#2dd4bf;--wn:#f59e0b;--ok:#4ade80;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121a21;--sf:#1b252e;--ink:#e6edf2;--mut:#98a8b5;--ln:#2c3a45;--ac:#2dd4bf;--wn:#f59e0b;--ok:#4ade80;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:980px;margin:0 auto;padding:20px 16px 48px}
+h1{font:700 26px/1.2 Georgia,"Times New Roman",serif;margin:0 0 4px}h2{font:600 18px Georgia,serif;margin:0 0 10px}
+p.s{color:var(--mut);margin:0 0 18px}
+section{background:var(--sf);border:1px solid var(--ln);border-radius:8px;padding:16px;margin-bottom:16px}
+.bar{height:10px;background:var(--ln);border-radius:5px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac);width:0;transition:width .3s}
+.kp{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
+.kp div{border-left:3px solid var(--ac);padding-left:10px}.kp b{font-size:22px;display:block}.kp span{color:var(--mut);font-size:13px}
+label.r{display:flex;gap:10px;padding:7px 0;border-top:1px solid var(--ln);cursor:pointer;align-items:flex-start}
+label.r input{margin-top:4px;accent-color:var(--ac);width:16px;height:16px;flex:none}
+label.r.d span.t{text-decoration:line-through;color:var(--mut)}
+.pg{color:var(--mut);font-size:12.5px;display:block}.keep{color:var(--wn);font-size:12.5px}
+h3{font-size:14px;margin:14px 0 2px;color:var(--ac)}
+select{font:inherit;padding:6px 8px;background:var(--sf);color:var(--ink);border:1px solid var(--ln);border-radius:6px;margin-bottom:8px}
+.sc{overflow-x:auto}svg{width:100%;min-width:560px;height:auto;display:block}
+.fl{margin:0;padding:0;list-style:none}.fl li{padding:8px 0 8px 12px;border-left:3px solid var(--wn);margin:8px 0;background:transparent}
+button{font:inherit;background:none;border:1px solid var(--ln);color:var(--mut);border-radius:6px;padding:4px 10px;cursor:pointer}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+</style></head><body><main>
+<h1>Progress FYP: Faktor EPF Balance di Malaysia</h1>
+<p class="s">Tandakan setiap item bila siap. Kemajuan disegerak antara laptop &amp; telefon guna kod rahsia yang sama. <span id="sy" style="font-size:12.5px"></span> <button id="cb" type="button">Tukar kod</button></p>
+
+<section><div class="kp">
+<div><b id="k1">0%</b><span>Keseluruhan siap</span></div>
+<div><b id="k2">0 / 21</b><span>Lokasi AUM disemak</span></div>
+<div><b id="k3">0 / 14</b><span>Tugas pembetulan</span></div>
+<div><b id="k4">34</b><span>Pemerhatian (1991–2024)</span></div></div>
+<div class="bar"><i id="pb"></i></div></section>
+
+<section><h2>1. Semakan AUM → EPF Balance (proposal PDF)</h2>
+<p class="s">21 lokasi dijumpai dalam teks (nombor halaman = halaman PDF). Tukar bukan sekadar nama: banyak ayat Bab 2 berhujah tentang “saiz dana”, jadi hujahnya perlu ditulis semula.</p><div id="aum"></div></section>
+
+<section><h2>2. Senarai pembetulan</h2><div id="tasks"></div></section>
+
+<section><h2>3. Data dalam DATA_FYP.xlsx</h2>
+<select id="sel" aria-label="Pilih pemboleh ubah"></select>
+<div class="sc"><svg id="ch" viewBox="0 0 640 260" role="img" aria-label="Carta siri masa"></svg></div>
+<h3>Perkara data yang perlu disahkan</h3>
+<ul class="fl">
+<li><b>Tiada lajur EPF Balance.</b> Fail hanya ada AUM. Hassan &amp; Othman (2018) takrif EPF Balance sebagai caruman tolak pengeluaran, jadi data baharu perlu diambil dari Laporan Tahunan EPF. Jangan hanya tukar nama lajur.</li>
+<li><b>Unit AUM salah label.</b> Header tulis RM'000, tetapi nilai 2014 = 636,542 sepadan RM636.5 bilion. Maknanya RM juta (seperti Table 3.1).</li>
+<li><b>Unit GDP salah label.</b> Header tulis USD Bilion, tetapi nilai 2014 = 1,106,443 sepadan RM1,106.6 bilion dalam Hassan &amp; Othman. Maknanya RM juta. Table 3.1 perlu dibetulkan.</li>
+<li><b>POP65 tahun 2002 = 931.5</b> turun daripada 1,035.4 (2001) dan naik ke 1,118.9 (2003). Nampak seperti kesilapan taip, semak sumber DOSM.</li>
+<li><b>AUM 1997 = 107,420</b> turun daripada 1996 lalu melonjak 36% pada 1998. Semak sumber.</li>
+<li><b>2025 tiada data AUM.</b> Skop Bab 1 kata 1991–2025, model guna 1991–2024 (N=34). Seragamkan.</li></ul></section>
+</main>
+<script>
+const Y=[];for(let y=1991;y<=2025;y++)Y.push(y);
+const D={
+"AUM (RM juta)":[52000,60860,71530,83310,96600,115220,107420,145810,163800,172000,187454,202176,220162,240362,263806,290256,318298,346115,375464,445848,477505,567600,597821,636542,696113,742324,813425,836542,927895,1003372,1012033,1008585,1141898,1252692,null],
+"Jangka hayat (tahun)":[71.2,71.5,71.7,71.7,71.8,71.8,72,71.8,71.9,72.2,72.8,72.8,73,73.3,73.6,73.7,73.7,73.7,73.9,74.1,74.3,74.4,74.5,74.5,74.6,74.4,74.4,74.6,74.8,74.7,74,73.8,74,75.2,75.3],
+"Kadar kematian kasar":[4.6,4.552,4.508,4.498,4.493,4.479,4.453,4.461,4.494,4.431,4.359,4.278,4.257,4.225,4.187,4.165,4.175,4.212,4.271,4.334,4.401,4.478,4.607,4.749,4.864,4.915,4.931,4.946,4.98,5.034,6.201,5.547,5.158,5.273,5.66],
+"Penduduk 65+ ('000)":[675.3,704.1,733.9,765.4,798.8,834,870.9,910.1,951.7,995.7,1035.4,931.5,1118.9,1163.7,1210.8,1253.9,1299.1,1347.1,1398.2,1452.9,1513.3,1580.4,1654.4,1735.6,1824,1919.2,2019.8,2125.7,2236.4,2350.1,2439.6,2526.9,2618.3,2751.4,2890.2],
+"Dividen konvensional (%)":[8,8,8,8,7.5,7.7,6.7,6.7,6.84,6,5,4.25,4.5,4.75,5,5.15,5.8,4.5,5.65,5.8,6,6.15,6.35,6.75,6.4,5.7,6.9,6.15,5.45,5.2,6.1,5.35,5.5,6.3,6.15],
+"KDNK nominal (RM juta)":[135124,150682,172194,195461,222473,253732,281795,283243,300764,356401,352579,383213,418769,474048,543578,596784,665340,769949,712857,821434,911733,971252,1018614,1106443,1176941,1249698,1372310,1447760,1512738,1418491,1548701,1793903,1824019,1932291,2023076],
+"Kadar pertukaran (MYR/USD)":[2.75,2.55,2.57,2.62,2.5,2.52,2.81,3.92,3.8,3.8,3.8,3.8,3.8,3.8,3.79,3.67,3.44,3.34,3.52,3.22,3.06,3.09,3.15,3.27,3.91,4.15,4.3,4.04,4.14,4.2,4.14,4.4,4.56,4.58,4.27],
+"Inflasi (%)":[4.2,4.7,3.5,3.7,3.5,3.5,2.7,5.3,2.7,1.5,1.5,1.7,1.1,1.4,3.1,3.6,2,5.4,0.6,1.7,3.2,1.6,2.1,3.2,2.1,2.1,3.7,1,0.7,-1.2,2.5,3.3,2.5,1.8,1.4]};
+const A=[
+["p7","Senarai singkatan","AUM = Asset Under Management. Tukar kepada EPF Balance (EPFB)."],
+["p9","§1.1 Latar belakang","“total asset under management (AUM) of the national pension system” (World Bank, 2018). Semak makna asal sumber sebelum tukar."],
+["p14","§2.2.1","“this study uses Total AUM as the main indicator”. Tukar takrifan indikator."],
+["p14","§2.2.1","“reflects the accurate aggregate financial position and true capital strength”. Tulis semula: EPF Balance = caruman tolak pengeluaran."],
+["p14","§2.2.1","“consistent increase in AUM shows efficiency of fund management”. Hujah ini tentang pengurusan aset, tidak sesuai untuk EPF Balance."],
+["p15","§2.3.1","“80 years ... require the AUM to develop in a longer period”. Tulis semula dan tambah rujukan."],
+["p16","§2.3.1","“long-term decline in Total AUM from the demographic transition”."],
+["p16","§2.3.2","“requires the Total AUM to survive for a longer period”."],
+["p17","§2.3.3","“incoming contribution funds that support Total AUM”. Sesuai hampir terus dengan EPF Balance."],
+["p18","§2.3.3","“Total AUM of EPF is not only tested from investment return dynamics...”."],
+["p18","§2.4.1","“inflation ... affect the Total AUM in general” (Afdhal & Mazlynda, 2025). Semak pemboleh ubah sebenar dalam kajian itu sebelum tukar."],
+["p19","§2.4.2","“growth of Total AUM because members tend not to withdraw”. Hujah ini sebenarnya sesuai dengan EPF Balance."],
+["p21","§2.4.4","“expansion of the Total Asset Under Management”."],
+["p28","Table 3.1","Nama pemboleh ubah, takrifan, unit (RM Million) dan sumber. Tulis semula takrifan ikut Hassan & Othman (2018)."],
+["p29","§3.4 / Figure 3.1","2 sebutan dalam teks dan 1 label kotak pemboleh ubah bersandar."],
+["p31","§3.6.1","“dependent variable, Total AUM” dalam semakan data hilang."],
+["p31","§3.6.2","“ln(AUM)” dalam transformasi log."],
+["p35","§3.10.1","“scatter plots ... between ln(AUM) and each independent variable”."],
+["p37","§3.10.2","Persamaan model ln(AUM)t. Teks persamaan tidak dapat dicari secara automatik, semak dengan mata."],
+["p40","§3.13","Ringkasan bab: “natural logarithm transformation applied to ln(AUM)”."],
+["p44","Rujukan","Tajuk berita Bernama (2024) mengandungi “AUM”. JANGAN tukar, itu tajuk sumber asal.",1]];
+const T=[
+["Keputusan","Bincang dengan penyelia (Dr. Adzhar) arah baharu: EPF Balance, MLR atau VECM"],
+["Keputusan","Cari dan masukkan data EPF Balance 1991–2024 (caruman tolak pengeluaran)"],
+["Bab 1","Tukar tajuk, soalan kajian dan objektif; takrif “sustainability” dan justifikasi EPF Balance sebagai proksi"],
+["Bab 1","Seragamkan tempoh data (1991–2024 atau 2025) dalam Skop, Significance dan Bab 3"],
+["Bab 2","Susun semula literatur; beri rujukan untuk setiap dakwaan"],
+["Bab 2","Betulkan Hassan & Othman (2018): kaedah Johansen/VECM, data 1960–2014, mortaliti bawah 5 tahun, POP60"],
+["Bab 2","Betulkan Table 2.6 dan padankan semua sitasi dengan senarai rujukan"],
+["Bab 3","Selesaikan isu 7 peramal dengan N=34 dan kolinearan LE/CDR/POP65"],
+["Bab 3","Putuskan Δln EPF Balance, ADF dan differencing; selaraskan aliran analisis"],
+["Bab 3","Betulkan kesilapan kecil (Step 1 stepwise, H1 F-test, Table 3.2, rujukan 3.7.1, sumber DIV)"],
+["Data","Betulkan unit AUM dan GDP dalam Excel dan Table 3.1; semak POP65 2002"],
+["Rujukan","Format APA 7, buang entri tidak disitasi, lengkapkan entri tidak lengkap"],
+["Bahasa","Semak tatabahasa dan nada formal"],
+["Hantar","Penyelia semak; sediakan jadual balasan komen pemeriksa"]];
+const FB={key:"AIzaSyCBwwht--vqwdg4mVVM7_HhfCUyTRjZcrg",pid:"fyp-progress-811f8"};
+let S={},LT=0,CODE="",tm=null,busy=false;
+try{S=JSON.parse(localStorage.getItem("fyp1")||"{}");LT=+localStorage.getItem("fyp_t")||0;CODE=localStorage.getItem("fyp_code")||""}catch(e){}
+const sy=t=>{const e=document.getElementById("sy");if(e)e.textContent=t};
+const URL_=()=>"https://firestore.googleapis.com/v1/projects/"+FB.pid+"/databases/(default)/documents/progress/"+encodeURIComponent(CODE);
+function local(){try{localStorage.setItem("fyp1",JSON.stringify(S));localStorage.setItem("fyp_t",String(LT))}catch(e){}}
+function save(){LT=Date.now();local();clearTimeout(tm);tm=setTimeout(push,500)}
+async function push(){if(!CODE)return;try{
+const r=await fetch(URL_()+"?updateMask.fieldPaths=s&updateMask.fieldPaths=t&key="+FB.key,{method:"PATCH",headers:{"Content-Type":"application/json"},
+body:JSON.stringify({fields:{s:{stringValue:JSON.stringify(S)},t:{integerValue:String(LT)}}})});
+sy(r.ok?"✓ Disegerak":"Gagal segerak ("+r.status+")")}catch(e){sy("Tiada internet, akan cuba lagi")}}
+function paint(){document.querySelectorAll("input[data-id]").forEach(i=>{const v=!!S[i.dataset.id];i.checked=v;i.closest("label").classList.toggle("d",v)});upd()}
+async function pull(){if(!CODE||busy)return;busy=true;try{
+const r=await fetch(URL_()+"?key="+FB.key);
+if(r.status===404){if(Object.keys(S).length)await push();else sy("✓ Disegerak");return}
+if(!r.ok){sy("Gagal segerak ("+r.status+")");return}
+const d=(await r.json()).fields||{},rt=+(d.t&&d.t.integerValue)||0;
+if(rt>LT){S=JSON.parse(d.s.stringValue);LT=rt;local();paint();sy("✓ Disegerak")}
+else if(rt<LT){await push()}else sy("✓ Disegerak")
+}catch(e){sy("Tiada internet, guna data setempat")}finally{busy=false}}
+function setCode(){const c=prompt("Masukkan kod rahsia (min 16 aksara). Guna kod SAMA di laptop dan phone:",CODE);
+if(c===null)return;if(c.trim().length<16){alert("Kod terlalu pendek. Minimum 16 aksara.");return}
+CODE=c.trim();try{localStorage.setItem("fyp_code",CODE)}catch(e){}pull()}
+document.getElementById("cb").onclick=setCode;
+if(!CODE)setTimeout(setCode,300);else pull();
+setInterval(pull,20000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)pull()});
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+function row(id,html,k){return `<label class="r ${S[id]?'d':''}"><input type="checkbox" data-id="${id}" ${S[id]?'checked':''}><span class="t">${html}</span></label>`}
+document.getElementById("aum").innerHTML=A.map((a,i)=>row("a"+i,`<span class="pg">${a[0]} · ${a[1]}</span>${a[2]}`)).join("");
+let last="",h="";T.forEach((t,i)=>{if(t[0]!=last){h+=`<h3>${t[0]}</h3>`;last=t[0]}h+=row("t"+i,t[1])});
+document.getElementById("tasks").innerHTML=h;
+function upd(){const a=A.filter((_,i)=>S["a"+i]).length,t=T.filter((_,i)=>S["t"+i]).length;
+k2.textContent=a+" / "+A.length;k3.textContent=t+" / "+T.length;
+const p=Math.round((a+t)/(A.length+T.length)*100);k1.textContent=p+"%";pb.style.width=p+"%"}
+document.addEventListener("change",e=>{const i=e.target.dataset.id;if(!i)return;S[i]=e.target.checked;e.target.closest("label").classList.toggle("d",e.target.checked);save();upd()});
+const sel=document.getElementById("sel");Object.keys(D).forEach(k=>sel.add(new Option(k,k)));
+function draw(){const v=D[sel.value],W=640,H=260,L=64,R=14,Tp=14,B=30;
+const f=v.filter(x=>x!=null),mn=Math.min(...f),mx=Math.max(...f),pd=(mx-mn)*.08||1,lo=mn-pd,hi=mx+pd;
+const X=i=>L+i*(W-L-R)/(Y.length-1),Yy=x=>H-B-(x-lo)/(hi-lo)*(H-B-Tp);
+let s="",pts=[];v.forEach((x,i)=>{if(x!=null)pts.push(X(i).toFixed(1)+","+Yy(x).toFixed(1))});
+for(let g=0;g<=4;g++){const val=lo+(hi-lo)*g/4,y=Yy(val);s+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="var(--ln)"/><text x="${L-6}" y="${y+4}" text-anchor="end" font-size="11" fill="var(--mut)">${Math.abs(val)>=1000?Math.round(val).toLocaleString("en"):val.toFixed(1)}</text>`}
+[1991,2000,2010,2020,2025].forEach(y=>{const x=X(y-1991);s+=`<text x="${x}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--mut)">${y}</text>`});
+s+=`<polyline points="${pts.join(" ")}" fill="none" stroke="var(--ac)" stroke-width="2.2"/>`;
+if(v[v.length-1]==null)s+=`<text x="${W-R}" y="${Tp+10}" text-anchor="end" font-size="11" fill="var(--wn)">2025: tiada data</text>`;
+ch.innerHTML=s}
+sel.onchange=draw;draw();upd();
+</script></body></html>
